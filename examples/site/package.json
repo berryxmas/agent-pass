@@ -1,5 +1,5 @@
 {
-  "name": "bookshop",
+  "name": "marta-icons",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@nicko-ai/agent-pass": "^0.1.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "lucide-static": "^1.61.0"
   }
 }

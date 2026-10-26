@@ -1,5 +1,5 @@
 // Book Reviews: a second, separate app. It sells nothing and holds no key; it
-// lets in an agent that bought a pass at the sample bookshop
+// lets in an agent that bought a pass at the sample app, Marta Icons
 // (https://agent-pass-sample.vercel.app), checked against the shared contract.
 
 import express from 'express';
@@ -7,8 +7,8 @@ import { passIsValid } from '../middleware/index.ts';
 import { honorPass, type HonorOptions } from './honor.ts';
 
 const PORT = Number(process.env.PORT ?? 4100);
-/** The sample bookshop's address: it sells the passes this app honors. */
-const BOOKSHOP = 'GC3DF7VPQD6BLUYPGWVAT363AG3QORHCRY3OK4XTET6HDTMQ6MXLUNHD';
+/** The sample app's address (Marta Icons): it sells the passes this app honors. */
+const SAMPLE_APP = 'GC3DF7VPQD6BLUYPGWVAT363AG3QORHCRY3OK4XTET6HDTMQ6MXLUNHD';
 
 const REVIEWS = [
   { title: 'Piranesi', stars: 5, review: 'A house of endless halls, told with total calm.' },
@@ -26,7 +26,7 @@ export function createApp(options: HonorOptions) {
 }
 
 if (import.meta.main) {
-  const apps = (process.env.HONOR_APPS ?? BOOKSHOP).split(',').map((a) => a.trim()).filter(Boolean);
+  const apps = (process.env.HONOR_APPS ?? SAMPLE_APP).split(',').map((a) => a.trim()).filter(Boolean);
   const isValid = async (contractId: string, app: string, agent: string) => {
     const live = await passIsValid(contractId, app, agent);
     console.log(`agent_pass.valid(${app.slice(0, 4)}..., ${agent.slice(0, 4)}...) on ${contractId.slice(0, 4)}...: ${live}`);

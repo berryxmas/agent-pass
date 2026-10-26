@@ -28,7 +28,7 @@ Limits from `/sep24/info`: 1 to 10 USDC per withdrawal. The form charged a 0.1 U
 
 ## The sample app's owner cashes out, Monday 26 Oct
 
-The owner of https://agent-pass-sample.vercel.app, the bookshop app set up from the published package, withdrew its sales through the same anchor with [`scripts/cash-out.ts`](../../scripts/cash-out.ts). The anchor's minimum is 1 USDC, so each withdrawal came after 20 real passes at 0.05 USDC from three test agents.
+The owner of https://agent-pass-sample.vercel.app, the sample app set up from the published package (a bookshop then, Marta Icons now, same owner key), withdrew its sales through the same anchor with [`scripts/cash-out.ts`](../../scripts/cash-out.ts). The anchor's minimum is 1 USDC, so each withdrawal came after 20 real passes at 0.05 USDC from three test agents.
 
 ```sh
 AGENT_PASS_APP_SECRET="$(stellar keys secret <owner>)" node scripts/cash-out.ts 1

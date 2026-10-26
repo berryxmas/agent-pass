@@ -8,9 +8,10 @@ HackMeridian 2026, Genesis path, **Stellar Composed** track. It composes an agen
 
 ## See it live
 
-- A sample bookshop app, set up from the published package by one sentence typed into Claude Code: https://agent-pass-sample.vercel.app ([its code](examples/bookshop))
+- The landing page, with the sample store and the dashboard behind it: https://agent-pass-sample.vercel.app ([its code](examples/site))
+- The sample store, Marta's icon store, selling its icons to agents through the published package: https://agent-pass-sample.vercel.app/marta
 - Its owner's sales dashboard, read live from the Stellar testnet ledger: https://agent-pass-sample.vercel.app/agent-pass
-- Its agent door: https://agent-pass-sample.vercel.app/agent/books answers `402 Payment Required` with the price until an agent pays.
+- Its agent door: https://agent-pass-sample.vercel.app/agent/icons?q=sun answers `402 Payment Required` with the price until an agent pays.
 - The npm package: [@nicko-ai/agent-pass](https://www.npmjs.com/package/@nicko-ai/agent-pass), built from [src/middleware](src/middleware), with the Claude Code skill inside it.
 
 ## The problem
@@ -25,14 +26,14 @@ The owner opens Claude Code in their Express app and types:
 Install the @nicko-ai/agent-pass npm package and follow node_modules/@nicko-ai/agent-pass/skills/agent-pass/SKILL.md to sell /agent to AI agents for 0.05 USDC per hour.
 ```
 
-Claude Code installs the package and follows the skill inside it: it makes or loads the owner's Stellar key in the Stellar CLI, funds it on testnet, turns on USDC, puts the gate on the route the owner named, mounts the sales dashboard on `/agent-pass`, writes the price and pass length to `.env`, then pays once from a throwaway test agent and shows both transactions on the explorer. The owner's secret key stays in the Stellar CLI; nothing writes it to a file. In the sample app this added 11 lines ([the diff](examples/bookshop#readme)).
+Claude Code installs the package and follows the skill inside it: it makes or loads the owner's Stellar key in the Stellar CLI, funds it on testnet, turns on USDC, puts the gate on the route the owner named, mounts the sales dashboard on `/agent-pass`, writes the price and pass length to `.env`, then pays once from a throwaway test agent and shows both transactions on the explorer. The owner's secret key stays in the Stellar CLI; nothing writes it to a file. On Sunday night a fresh Claude Code did this for the sample app's owner key in a plain bookshop, adding 11 lines; the sample app at that address is now Marta's icon store, with the same lines on the same key ([the code](examples/site#readme)).
 
 Then an agent visits:
 
 ```
 AI agent (Stellar CLI key)            Owner's Express app                         Stellar testnet
    |                                    |                                         |
-   |-- GET /agent/books --------------->|                                         |
+   |-- GET /agent/icons?q=sun --------->|                                         |
    |<-- 402 + MPP charge: the price ----|                                         |
    |-- signed USDC transfer (MPP) ----->|-- sends it, waits until settled ------->|  USDC to the owner
    |                                    |-- agent_pass.issue(app, agent, exp) --->|  Soroban contract
@@ -50,7 +51,7 @@ Owner's USDC --> SEP-24 anchor --> bank
 3. **Pass.** Only after the money settles, the owner's server records the pass in the shared `agent_pass` contract with the owner's key, and returns the request with an `Agent-Pass` header: a token **created and signed by the owner's server with the owner's Stellar key**, holding the agent's address, the expiry, the payment and the pass record. If the contract write fails, the agent gets a 502 with its payment hash and no pass.
 4. **Next calls.** The agent sends the token. The gate checks the signature and the expiry on the owner's server, with no network call and no payment, until the pass expires.
 5. **Dashboard.** The page at `/agent-pass` reads the owner's sales, balance and agents from the public Stellar ledger in the browser, so there is no database and nothing to set up, locally or on a host such as Vercel.
-6. **Cash-out.** The owner's USDC leaves through an anchor. The sample bookshop's owner withdrew 1 USDC of its sales through the SDF test anchor over SEP-24, and the anchor marked it completed ([the 36-second capture](docs/media/cash-out.mp4), [how](docs/research/test-anchor.md)). [scripts/cash-out.ts](scripts/cash-out.ts) runs it. The test anchor pays out simulated US dollars, not real money.
+6. **Cash-out.** The owner's USDC leaves through an anchor. The sample app's owner withdrew 1 USDC of its sales through the SDF test anchor over SEP-24, and the anchor marked it completed ([the 36-second capture](docs/media/cash-out.mp4), [how](docs/research/test-anchor.md)). [scripts/cash-out.ts](scripts/cash-out.ts) runs it. The test anchor pays out simulated US dollars, not real money.
 
 Humans keep using the normal site. Nothing tries to tell people from agents: the gate sits only on the route the owner names for agents.
 
@@ -70,16 +71,18 @@ Every hash opens at `https://stellar.expert/explorer/testnet/tx/<hash>`. The con
 | What | Value |
 | --- | --- |
 | `agent_pass` contract | [`CDLR2ABHIPQ7SNWJKT3S5EE7DFTZ2VB2FJLISODIFNLYCRUCZKBFYJKU`](https://stellar.expert/explorer/testnet/contract/CDLR2ABHIPQ7SNWJKT3S5EE7DFTZ2VB2FJLISODIFNLYCRUCZKBFYJKU) |
-| Bookshop owner, set up by Claude Code | [`GC3DF7VPQD6BLUYPGWVAT363AG3QORHCRY3OK4XTET6HDTMQ6MXLUNHD`](https://stellar.expert/explorer/testnet/account/GC3DF7VPQD6BLUYPGWVAT363AG3QORHCRY3OK4XTET6HDTMQ6MXLUNHD) |
+| The sample app's owner (Marta Icons, before that the bookshop), set up by Claude Code | [`GC3DF7VPQD6BLUYPGWVAT363AG3QORHCRY3OK4XTET6HDTMQ6MXLUNHD`](https://stellar.expert/explorer/testnet/account/GC3DF7VPQD6BLUYPGWVAT363AG3QORHCRY3OK4XTET6HDTMQ6MXLUNHD) |
 | Test agent | [`GCIZIWMQKFGCSH7MIQW2EVJKAO5TWUDLXCGYVCQ2F4UY3XUE7BTMEIYI`](https://stellar.expert/explorer/testnet/account/GCIZIWMQKFGCSH7MIQW2EVJKAO5TWUDLXCGYVCQ2F4UY3XUE7BTMEIYI) |
-| Claude Code's setup run: 0.05 USDC, agent to bookshop owner (25 Oct, 23:49 UTC) | [`2fb73c99c08760f908986c21f98333300702246b9f8085e70e74df6867bbdb1f`](https://stellar.expert/explorer/testnet/tx/2fb73c99c08760f908986c21f98333300702246b9f8085e70e74df6867bbdb1f) |
+| Claude Code's setup run: 0.05 USDC, agent to the sample app's owner (25 Oct, 23:49 UTC) | [`2fb73c99c08760f908986c21f98333300702246b9f8085e70e74df6867bbdb1f`](https://stellar.expert/explorer/testnet/tx/2fb73c99c08760f908986c21f98333300702246b9f8085e70e74df6867bbdb1f) |
 | Its pass, `agent_pass.issue` | [`3934caed42e877b397db03d153504357e50cd7f08f7f12689ea5d0281f2c7a8f`](https://stellar.expert/explorer/testnet/tx/3934caed42e877b397db03d153504357e50cd7f08f7f12689ea5d0281f2c7a8f) |
 | The deployed sample on Vercel: 0.05 USDC (26 Oct, 00:03 UTC) | [`ffe3f2300f1e32bacd7feb758cb50c6634c4ce6efa7888141cc24968a78f083c`](https://stellar.expert/explorer/testnet/tx/ffe3f2300f1e32bacd7feb758cb50c6634c4ce6efa7888141cc24968a78f083c) |
 | Its pass | [`46b18e497bae5fb37b2b9df4d9e5c322c4a7f457d0066f67f6d0240cf1d6507b`](https://stellar.expert/explorer/testnet/tx/46b18e497bae5fb37b2b9df4d9e5c322c4a7f457d0066f67f6d0240cf1d6507b) |
+| Marta Icons on Vercel, the first visit: 0.05 USDC (26 Oct, 09:48 UTC+1) | [`4ba07b25c587a662eb9527b96a86cd1e7eaafb1fce96081fe20a95e524008de1`](https://stellar.expert/explorer/testnet/tx/4ba07b25c587a662eb9527b96a86cd1e7eaafb1fce96081fe20a95e524008de1) |
+| Its pass | [`4480e7e7292b8376d5e27688f7c90eec4dacf3fc5ca1e59e3f840ac073bf3a0a`](https://stellar.expert/explorer/testnet/tx/4480e7e7292b8376d5e27688f7c90eec4dacf3fc5ca1e59e3f840ac073bf3a0a) |
 | An `issue` that failed on chain: the gate gave no pass | [`57c13df9a62a9df315ea4786faba407aaf2f5ec79fa7b16ea72cc745f6ef4ba2`](https://stellar.expert/explorer/testnet/tx/57c13df9a62a9df315ea4786faba407aaf2f5ec79fa7b16ea72cc745f6ef4ba2) |
-| One pass, two apps: 0.05 USDC, an agent to the sample bookshop (26 Oct, 00:41 UTC) | [`56dae276da74d4327608246461db1617b9a4c99c925a80727812e0f798138baf`](https://stellar.expert/explorer/testnet/tx/56dae276da74d4327608246461db1617b9a4c99c925a80727812e0f798138baf) |
-| The bookshop's pass; Book Reviews then let the agent in on it | [`9722bbb18de72767b92ff43f7e62f9dd940d2fb775c37308f97d66271a53aaac`](https://stellar.expert/explorer/testnet/tx/9722bbb18de72767b92ff43f7e62f9dd940d2fb775c37308f97d66271a53aaac) |
-| Cash-out: 1 USDC of the bookshop's sales to the SDF test anchor, SEP-24 withdrawal completed (26 Oct, 00:48 UTC) | [`0e32dfc878258139d39500b59f5829c700b3fd11d94b64067c02f6a50c86500d`](https://stellar.expert/explorer/testnet/tx/0e32dfc878258139d39500b59f5829c700b3fd11d94b64067c02f6a50c86500d) |
+| One pass, two apps: 0.05 USDC, an agent to the sample app (26 Oct, 00:41 UTC) | [`56dae276da74d4327608246461db1617b9a4c99c925a80727812e0f798138baf`](https://stellar.expert/explorer/testnet/tx/56dae276da74d4327608246461db1617b9a4c99c925a80727812e0f798138baf) |
+| The sample app's pass; Book Reviews then let the agent in on it | [`9722bbb18de72767b92ff43f7e62f9dd940d2fb775c37308f97d66271a53aaac`](https://stellar.expert/explorer/testnet/tx/9722bbb18de72767b92ff43f7e62f9dd940d2fb775c37308f97d66271a53aaac) |
+| Cash-out: 1 USDC of the sample app's sales to the SDF test anchor, SEP-24 withdrawal completed (26 Oct, 00:48 UTC) | [`0e32dfc878258139d39500b59f5829c700b3fd11d94b64067c02f6a50c86500d`](https://stellar.expert/explorer/testnet/tx/0e32dfc878258139d39500b59f5829c700b3fd11d94b64067c02f6a50c86500d) |
 
 ## Run it yourself
 
@@ -94,9 +97,9 @@ npm install && npm test
 cd src/contract && cargo test && stellar contract build
 ```
 
-To sell your own Express app's route, type the sentence above into Claude Code in that app, or add the gate by hand ([the package README](src/middleware/README.md)). To run the sample app, see [examples/bookshop](examples/bookshop).
+To sell your own Express app's route, type the sentence above into Claude Code in that app, or add the gate by hand ([the package README](src/middleware/README.md)). To run the site and the sample store, see [examples/site](examples/site).
 
-One pass, two apps: the agent buys a pass at the sample bookshop on Vercel (0.05 testnet USDC), then gets into Book Reviews with it.
+One pass, two apps: the agent buys a pass at Marta Icons on Vercel (0.05 testnet USDC), then gets into Book Reviews with it.
 
 ```sh
 npm run second-app                                                         # terminal 1: Book Reviews on :4100
@@ -137,8 +140,8 @@ For the code in `src/`.
 | [src/middleware/](src/middleware) | The npm package `@nicko-ai/agent-pass`: the gate, the pass token, the dashboard, their tests, and the Claude Code skill in [skills/agent-pass/](src/middleware/skills/agent-pass) |
 | [src/contract/](src/contract) | The `agent_pass` Soroban contract and its tests |
 | [.github/workflows/tests.yml](.github/workflows/tests.yml) | Runs the package, second app and contract tests on every push |
-| [examples/bookshop/](examples/bookshop) | The sample app Claude Code set up, deployed at agent-pass-sample.vercel.app |
-| [src/second-app/](src/second-app), [scripts/second-app-demo.ts](scripts/second-app-demo.ts) | Book Reviews, a second app that sells nothing and holds no key, and the agent run that buys a pass at the bookshop and uses it there |
+| [examples/site/](examples/site) | The live site: the Agent Pass landing page, Marta's icon store (the sample app, with the gate from the package) and the owner's dashboard, one Express app deployed at agent-pass-sample.vercel.app |
+| [src/second-app/](src/second-app), [scripts/second-app-demo.ts](scripts/second-app-demo.ts) | Book Reviews, a second app that sells nothing and holds no key, and the agent run that buys a pass at Marta Icons and uses it there |
 | [scripts/cash-out.ts](scripts/cash-out.ts) | The owner's cash-out through the SDF test anchor (SEP-10, SEP-24) |
 | [docs/deploy.md](docs/deploy.md) | The contract's deploy record and the first on-chain runs |
 | [docs/research/test-anchor.md](docs/research/test-anchor.md) | The cash-out through the SDF test anchor |

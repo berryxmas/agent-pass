@@ -44,7 +44,7 @@ agent-1 (`GA3CI5...E4HY`) against Saturday's toy app on localhost, run by its ag
 
 ## One pass, two apps (26 Oct, 00:41 UTC)
 
-`npm run agent:second-app` with agent-1, against the sample bookshop on Vercel (built from the published package, owner `GC3DF7VPQD6BLUYPGWVAT363AG3QORHCRY3OK4XTET6HDTMQ6MXLUNHD`) and Book Reviews on this Mac (`PORT=4103 npm run second-app`, because a test server held the default port 4100; the agent then ran with `SECOND_APP_URL=http://localhost:4103/agent/reviews`):
+`npm run agent:second-app` with agent-1, against the sample app on Vercel (then a bookshop, since replaced by Marta Icons at the same address and owner; built from the published package, owner `GC3DF7VPQD6BLUYPGWVAT363AG3QORHCRY3OK4XTET6HDTMQ6MXLUNHD`) and Book Reviews on this Mac (`PORT=4103 npm run second-app`, because a test server held the default port 4100; the agent then ran with `SECOND_APP_URL=http://localhost:4103/agent/reviews`):
 
 ```
 1. first app  https://agent-pass-sample.vercel.app/agent/books
@@ -61,6 +61,8 @@ agent-1 (`GA3CI5...E4HY`) against Saturday's toy app on localhost, run by its ag
 Book Reviews logged `agent_pass.valid(GC3D..., GA3C...) on CDLR...: true` for the 200. A token signed by a real account that never called `issue` got 401 "The contract has no live pass for this agent", so the contract, not the token, decides. The agent's signature names the app it was made for (Book Reviews' own name, `AUDIENCE`, never the request's Host header) and is let in once, so a signature made for another app, or replayed, gets 401 (`src/second-app/honor.test.ts`).
 
 `passIsValid()` simulates the read with the selling app's address as the source account, so it throws when that account does not exist on testnet. A real seller always exists, since it is paid; Book Reviews answers 502 in that case and lets nobody in.
+
+Rerun on Monday 26 Oct, 09:55 WET, after the sample app became Marta Icons: the agent bought its pass at `https://agent-pass-sample.vercel.app/agent/icons?q=sun` (payment `6809e4b7fc355c12f59b70c65b31c337d7d3a5623537e0bdbb1ac428f29006a8`, pass `eb18c5731440587fa4f02e1c1a3d2eddfb209aa1a0a79194f00503b352ccad3d`) and Book Reviews let it in on it: no pass 401, copied pass 401, pass plus the agent's signature 200.
 
 ## An `issue` that fails on chain gives no pass
 

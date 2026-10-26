@@ -1,5 +1,5 @@
 // One pass, two apps. The agent buys a pass at the first app (the sample
-// bookshop on Vercel, built from the published package), then calls Book
+// app Marta Icons on Vercel, built from the published package), then calls Book
 // Reviews, a second app that never took its money and holds no key.
 
 import { Keypair } from '@stellar/stellar-sdk';
@@ -8,7 +8,7 @@ import { Receipt } from 'mppx';
 import { PASS_HEADER, type PassClaims } from '../src/middleware/index.ts';
 import { PROOF_HEADER, signProof } from '../src/second-app/honor.ts';
 
-const FIRST = process.env.FIRST_APP_URL ?? 'https://agent-pass-sample.vercel.app/agent/books';
+const FIRST = process.env.FIRST_APP_URL ?? 'https://agent-pass-sample.vercel.app/agent/icons?q=sun';
 const SECOND = process.env.SECOND_APP_URL ?? 'http://localhost:4100/agent/reviews';
 const agent = Keypair.fromSecret(process.env.STELLAR_SECRET!);
 const tx = (hash: string) => `https://stellar.expert/explorer/testnet/tx/${hash}`;
