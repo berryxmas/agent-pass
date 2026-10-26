@@ -1,0 +1,44 @@
+# Agent Pass
+
+> Let AI agents pay to use any Express app. An agent that calls the app's agent route gets `402 Payment Required`, pays 0.05 USDC on Stellar over MPP, and gets a pass for an hour. No account, no sign-up. The owner adds it with one npm package (`@nicko-ai/agent-pass`) and one sentence in Claude Code, and watches every sale on a dashboard the app serves itself. HackMeridian 2026, Stellar Composed track. Testnet only.
+
+This site is the live demo. It is one Express app with three parts: this landing page, a sample store (Marta Icons) that sells its icon search to agents, and the store owner's sales dashboard.
+
+## How a visit works
+
+1. **402.** The agent calls `/agent/icons?q=sun` with no pass. The gate answers with an MPP charge: the price, the owner's Stellar address, USDC on Stellar testnet.
+2. **Pay.** The agent signs a USDC transfer with its own Stellar key and retries. The owner's server sends it to the network and waits until it settles (about five seconds).
+3. **Pass.** Only after the money settles, the server records the pass in the shared `agent_pass` Soroban contract and answers with an `Agent-Pass` token signed by the owner's key.
+4. **Next calls.** The agent sends the token. The gate checks the signature and expiry locally, with no payment, until the pass expires.
+
+## Set it up
+
+Open Claude Code in an Express app and type:
+
+    Install the @nicko-ai/agent-pass npm package and follow node_modules/@nicko-ai/agent-pass/skills/agent-pass/SKILL.md to sell /agent to AI agents for 0.05 USDC per hour.
+
+Claude Code installs the package, makes or loads the owner's Stellar key in the Stellar CLI, puts the gate on the route, mounts the dashboard on `/agent-pass`, and pays once from a test agent to prove it.
+
+## Live demo
+
+- [Landing page](https://agent-pass-sample.vercel.app/): what Agent Pass is, in one page
+- [Marta Icons](https://agent-pass-sample.vercel.app/marta): the sample store, a plain Express app with the gate added; people use it for free
+- [Agent door](https://agent-pass-sample.vercel.app/agent/icons?q=sun): the same icon search for agents; answers `402 Payment Required` with the price until an agent pays
+- [Owner's dashboard](https://agent-pass-sample.vercel.app/agent-pass): earned, passes sold, agents, balance and every sale, read live from the Stellar testnet ledger; no database
+
+## On-chain proof
+
+- [`agent_pass` contract](https://stellar.expert/explorer/testnet/contract/CDLR2ABHIPQ7SNWJKT3S5EE7DFTZ2VB2FJLISODIFNLYCRUCZKBFYJKU): the shared Soroban contract every app writes its passes to
+- [A real payment through this site](https://stellar.expert/explorer/testnet/tx/4ba07b25c587a662eb9527b96a86cd1e7eaafb1fce96081fe20a95e524008de1): 0.05 USDC from a test agent to the store's owner
+- [Its pass](https://stellar.expert/explorer/testnet/tx/4480e7e7292b8376d5e27688f7c90eec4dacf3fc5ca1e59e3f840ac073bf3a0a): written to the contract by the owner's key
+
+## Code
+
+- [GitHub repository](https://github.com/berryxmas/agent-pass): the middleware, the Soroban contract, the sample site, a second app that honors the same pass, and the on-chain proofs
+- [npm package @nicko-ai/agent-pass](https://www.npmjs.com/package/@nicko-ai/agent-pass): the gate, the dashboard and the Claude Code skill
+- [README](https://github.com/berryxmas/agent-pass#readme): the full write-up, why MPP and Stellar, and every transaction hash
+
+## Optional
+
+- [Sample site code](https://github.com/berryxmas/agent-pass/tree/main/examples/site): this site
+- [Contract deploy record](https://github.com/berryxmas/agent-pass/blob/main/docs/deploy.md)
