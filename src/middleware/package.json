@@ -1,0 +1,45 @@
+{
+  "name": "@nicko-ai/agent-pass",
+  "version": "0.1.1",
+  "description": "Express middleware: AI agents pay a small amount in USDC on Stellar over MPP and get a pass instead of signing up. Testnet.",
+  "license": "MIT",
+  "author": "Nick Bobrowski",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "skills"
+  ],
+  "engines": {
+    "node": ">=22.12"
+  },
+  "keywords": [
+    "express",
+    "middleware",
+    "stellar",
+    "usdc",
+    "mpp",
+    "402",
+    "ai-agents",
+    "soroban"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build"
+  },
+  "dependencies": {
+    "@stellar/mpp": "^0.7.1",
+    "@stellar/stellar-sdk": "^15.1.0",
+    "mppx": "^0.6.31"
+  },
+  "peerDependencies": {
+    "express": "^4.21.0 || ^5.0.0"
+  }
+}

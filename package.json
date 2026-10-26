@@ -1,0 +1,23 @@
+{
+  "name": "agent-pass",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=23.6"
+  },
+  "scripts": {
+    "test": "node --test src/middleware/*.test.ts",
+    "package": "npm pack ./src/middleware --pack-destination ."
+  },
+  "dependencies": {
+    "@stellar/mpp": "^0.7.1",
+    "@stellar/stellar-sdk": "^15.1.0",
+    "express": "^5.3.0",
+    "mppx": "^0.6.31"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.0"
+  }
+}

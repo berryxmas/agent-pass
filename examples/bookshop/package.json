@@ -1,0 +1,12 @@
+{
+  "name": "bookshop",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.js"
+  },
+  "dependencies": {
+    "@nicko-ai/agent-pass": "^0.1.1",
+    "express": "^5.1.0"
+  }
+}
