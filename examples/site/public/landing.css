@@ -73,7 +73,7 @@ pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
 .browser { display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 12px; background: #eef1f5; border-bottom: 1px solid #dfe3ea; }
 .browser span { width: 10px; height: 10px; border-radius: 50%; background: #d0d5dd; }
 .browser span:first-child { background: #ff5f57; } .browser span:nth-child(2) { background: #febc2e; } .browser span:nth-child(3) { background: #28c840; }
-.browser em { flex: 1; margin-left: 10px; font-style: normal; font-family: var(--font-mono); font-size: 11px; color: #596171; background: #fff; border-radius: 6px; padding: 3px 10px; text-align: center; }
+.browser em { flex: 1; margin-left: 10px; font-style: normal; font-family: var(--font-mono); font-size: 11px; color: #596171; background: #fff; border-radius: 6px; padding: 3px 10px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .hero-shot figcaption { margin-top: 16px; font-size: 13px; color: var(--on-ink-2); text-align: center; }
 
 /* Page body */
