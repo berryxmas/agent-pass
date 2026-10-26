@@ -1,6 +1,6 @@
 {
   "name": "@nicko-ai/agent-pass",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Express middleware: AI agents pay a small amount in USDC on Stellar over MPP and get a pass instead of signing up. Testnet.",
   "license": "MIT",
   "author": "Nick Bobrowski",

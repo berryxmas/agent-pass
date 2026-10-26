@@ -1,7 +1,8 @@
 // The owner's dashboard: one page, served by the app itself, that reads the
-// owner's real sales from the public ledger (Horizon, Stellar testnet). Every
-// sale is a USDC transfer to the owner's account, so no database, no backend
-// and no setup: the page asks Horizon from the browser and refreshes itself.
+// owner's real sales from the public ledger (Horizon, Stellar testnet). A sale
+// is a USDC transfer to the owner's account that the owner's key then answered
+// with an `issue` for the same agent in the agent_pass contract, so no database,
+// no backend and no setup: the page asks Horizon from the browser and refreshes itself.
 //
 // The HTML lives in this file as a string so the compiled package needs no
 // file reads at run time (Vercel bundles only the JavaScript it can trace).
@@ -28,6 +29,66 @@ export function passLength(ttlSeconds: number): string {
   if (ttlSeconds % 3600 === 0) return unit(ttlSeconds / 3600, 'hour');
   if (ttlSeconds % 60 === 0) return unit(ttlSeconds / 60, 'minute');
   return unit(ttlSeconds, 'second');
+}
+
+type HorizonOperation = {
+  id: string;
+  type: string;
+  source_account: string;
+  transaction_hash: string;
+  transaction_successful: boolean;
+  created_at: string;
+  parameters?: { value: string }[];
+  asset_balance_changes?: { asset_code?: string; asset_issuer?: string; from?: string; to?: string; amount: string }[] | null;
+};
+export type Sale = { hash: string; usdc: number; from: string; at: number };
+
+/** The pass sales among the owner's ledger operations: each USDC payment to the owner that an
+ * `issue` signed by the owner answered, for the same agent, later on the ledger. Any other USDC
+ * (a gift, a test transfer, a payment whose pass failed) is not a sale. The page runs this same
+ * function in the browser, so it uses only plain JavaScript. */
+export function passSales(ops: HorizonOperation[], cfg: { app: string; contractId: string; usdcIssuer: string }): Sale[] {
+  // A contract argument as Horizon shows it: the base64 XDR of an ScVal address.
+  function addressArg(strkey: string) {
+    const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+    const raw: number[] = [];
+    let bits = 0, value = 0;
+    for (let i = 0; i < strkey.length; i++) {
+      value = (value << 5) | ALPHABET.indexOf(strkey[i]);
+      bits += 5;
+      if (bits >= 8) { bits -= 8; raw.push((value >>> bits) & 255); value &= (1 << bits) - 1; }
+    }
+    // SCV_ADDRESS, then SC_ADDRESS_TYPE_CONTRACT and its hash, or SC_ADDRESS_TYPE_ACCOUNT, PUBLIC_KEY_TYPE_ED25519 and the key
+    const head = strkey[0] === 'C' ? [0, 0, 0, 18, 0, 0, 0, 1] : [0, 0, 0, 18, 0, 0, 0, 0, 0, 0, 0, 0];
+    return btoa(String.fromCharCode.apply(null, head.concat(raw.slice(1, 33))));
+  }
+  const ISSUE = 'AAAADwAAAAVpc3N1ZQAAAA=='; // the symbol `issue`
+  const contract = addressArg(cfg.contractId), app = addressArg(cfg.app);
+  const payments: (Sale & { id: bigint; agent: string; sold?: boolean })[] = [];
+  const issues: { id: bigint; agent: string }[] = [];
+  ops.forEach(function (op) {
+    if (!op.transaction_successful) return;
+    const p = op.parameters || [];
+    if (op.source_account === cfg.app && op.type === 'invoke_host_function' && p.length === 5 &&
+        p[0].value === contract && p[1].value === ISSUE && p[2].value === app) {
+      issues.push({ id: BigInt(op.id), agent: p[3].value });
+    }
+    (op.asset_balance_changes || []).forEach(function (c) {
+      if (c.asset_code === 'USDC' && c.asset_issuer === cfg.usdcIssuer && c.to === cfg.app && c.from) {
+        payments.push({ id: BigInt(op.id), agent: addressArg(c.from), hash: op.transaction_hash, usdc: Number(c.amount), from: c.from, at: new Date(op.created_at).getTime() });
+      }
+    });
+  });
+  const newestFirst = function (a: { id: bigint }, b: { id: bigint }) { return a.id < b.id ? 1 : a.id > b.id ? -1 : 0; };
+  issues.sort(newestFirst);
+  payments.sort(newestFirst);
+  const sales: Sale[] = [];
+  // Each pass takes the newest payment from its agent that came before it and no other pass took.
+  issues.forEach(function (issue) {
+    const paid = payments.find(function (s) { return !s.sold && s.agent === issue.agent && s.id < issue.id; });
+    if (paid) { paid.sold = true; sales.push({ hash: paid.hash, usdc: paid.usdc, from: paid.from, at: paid.at }); }
+  });
+  return sales;
 }
 
 // The brand mark, from the designer's Icon Color.svg.
@@ -75,6 +136,7 @@ tr:last-child td{border-bottom:0}td.r,th.r{text-align:right;font-variant-numeric
 `;
 
 // Plain browser JavaScript: no template literals here, so this file can hold it in one.
+// passSales comes in as its own source.
 const JS = `
 var cfg = JSON.parse(document.getElementById('cfg').textContent);
 var HORIZON = cfg.horizon, EXPLORER = cfg.explorer;
@@ -100,26 +162,21 @@ function fetchJson(url) {
   });
 }
 
-// Every USDC transfer into the owner's account, newest first, up to 1000 records.
+${passSales}
+
+// The owner's latest 2000 operations, newest first: the payments in and the passes issued, about 1000 sales.
 function fetchSales() {
-  var sales = [];
+  var ops = [];
   function page(url, left) {
     return fetchJson(url).then(function (body) {
-      if (!body) return sales;
+      if (!body) return ops;
       var records = body._embedded.records;
-      records.forEach(function (op) {
-        if (!op.transaction_successful) return;
-        (op.asset_balance_changes || []).forEach(function (c) {
-          if (c.asset_code === 'USDC' && c.asset_issuer === cfg.usdcIssuer && c.to === cfg.app) {
-            sales.push({ hash: op.transaction_hash, usdc: Number(c.amount), from: c.from || '', at: new Date(op.created_at).getTime() });
-          }
-        });
-      });
-      if (records.length < 200 || left <= 1) return sales;
+      ops = ops.concat(records);
+      if (records.length < 200 || left <= 1) return ops;
       return page(body._links.next.href, left - 1);
     });
   }
-  return page(HORIZON + '/accounts/' + cfg.app + '/payments?order=desc&limit=200', 5);
+  return page(HORIZON + '/accounts/' + cfg.app + '/operations?order=desc&limit=200', 10).then(function (all) { return passSales(all, cfg); });
 }
 
 function fetchBalance() {

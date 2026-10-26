@@ -1,5 +1,7 @@
 # Agent Pass
 
+[![Tests](../../actions/workflows/tests.yml/badge.svg)](../../actions/workflows/tests.yml)
+
 Let AI agents pay to use any Express app. An agent that calls the app's agent route gets `402 Payment Required`, pays a small amount in USDC on Stellar over MPP, and gets a pass for as long as the owner chose. No account, no sign-up. The owner sets it all up by typing one sentence into Claude Code, and watches every sale on a dashboard the app serves itself.
 
 HackMeridian 2026, Genesis path, **Stellar Composed** track. It composes an agent wallet from the Stellar CLI, MPP payments in USDC, a Soroban contract that records each pass, and a SEP-24 anchor for the owner's cash-out. Testnet only.
@@ -84,8 +86,8 @@ Every hash opens at `https://stellar.expert/explorer/testnet/tx/<hash>`. The con
 Needs Node 23.6 or later for the tests (the package itself runs on Node 22.12 or later), Rust 1.91 or later with the `wasm32v1-none` target, and the [Stellar CLI](https://developers.stellar.org/docs/tools/cli/install-cli).
 
 ```sh
-# The package and the second app: 24 tests (the signed pass, no pass when the contract write fails, the 402,
-# the dashboard, a pass honored at a second app, a forged host, a replay, an expired pass)
+# The package and the second app: 30 tests (the signed pass, no pass when the contract write fails, the 402,
+# the dashboard and the sales it counts, a pass honored at a second app, a forged host, a replay, an expired pass)
 npm install && npm test
 
 # The contract: 8 tests, then build
@@ -114,6 +116,7 @@ For the code in `src/`.
 | Threat | Case | Answer |
 | --- | --- | --- |
 | Spoofing | An agent presents a pass it did not buy | The token is signed by the owner's key and names the paying address; a token signed by another key or with a changed expiry is refused (tested). The token is a bearer pass: whoever holds it gets in until it expires |
+| Spoofing | An agent replays a payment it already used, to get a second pass | The MPP server remembers each used challenge and payment only in memory (`Store.memory()`), so a restart or a second server instance forgets them. The chain still refuses the replay: the agent signs a transaction that uses up its account's next sequence number and stops being valid when the five-minute challenge ends, so the network applies it once and rejects it after that (a payment resubmitted on testnet came back `txTooLate`), and the gate gives a pass only when its own broadcast is accepted. In push mode, where the agent sends the payment itself and hands over its hash, a restarted server or a second instance could accept the same hash again within those five minutes; the agent gets a second token and at most five more minutes of pass time. A shared store closes that case |
 | Tampering | Someone extends a pass in the contract | Only the app's own key can call `issue` for that app; the contract rejects every other caller |
 | Repudiation | The owner says a payment never arrived | Every payment is a testnet transaction with a hash, and every `issue` emits an event; the dashboard lists each sale with its link |
 | Information disclosure | The ledger shows which agent used which app | The agent's address is a pseudonym; no personal data goes on chain. The dashboard shows only public ledger data |
@@ -133,6 +136,7 @@ For the code in `src/`.
 | --- | --- |
 | [src/middleware/](src/middleware) | The npm package `@nicko-ai/agent-pass`: the gate, the pass token, the dashboard, their tests, and the Claude Code skill in [skills/agent-pass/](src/middleware/skills/agent-pass) |
 | [src/contract/](src/contract) | The `agent_pass` Soroban contract and its tests |
+| [.github/workflows/tests.yml](.github/workflows/tests.yml) | Runs the package, second app and contract tests on every push |
 | [examples/bookshop/](examples/bookshop) | The sample app Claude Code set up, deployed at agent-pass-sample.vercel.app |
 | [src/second-app/](src/second-app), [scripts/second-app-demo.ts](scripts/second-app-demo.ts) | Book Reviews, a second app that sells nothing and holds no key, and the agent run that buys a pass at the bookshop and uses it there |
 | [scripts/cash-out.ts](scripts/cash-out.ts) | The owner's cash-out through the SDF test anchor (SEP-10, SEP-24) |

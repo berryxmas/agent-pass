@@ -1,0 +1,32 @@
+# Every push runs the package, second app and contract tests.
+name: Tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  package:
+    name: Package and second app
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Build the npm package
+        run: npm --prefix src/middleware run build
+
+  contract:
+    name: Contract
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: src/contract
+    steps:
+      - uses: actions/checkout@v5
+      - run: rustup update stable && rustup default stable
+      - run: cargo test --locked

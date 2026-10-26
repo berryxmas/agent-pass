@@ -73,7 +73,7 @@ In a handler, `res.locals.agentPass` holds the pass. Any other app can ask the s
 
 ## Your dashboard
 
-`gate.dashboard` is one page your app serves itself, at the path you mount it on. It shows what you earned, the passes sold, the agents that paid, your USDC balance, a bar per day for the last 30 days and every sale with its transaction link. The browser reads all of it from the public Stellar ledger, so there is no database and nothing to set up: it works the same on your machine and on a host such as Vercel. It shows only public ledger data, which is why it needs no login; put it behind your own login if you prefer.
+`gate.dashboard` is one page your app serves itself, at the path you mount it on. It shows what you earned, the passes sold, the agents that paid, your USDC balance, a bar per day for the last 30 days and every sale with its transaction link. The browser reads all of it from the public Stellar ledger, so there is no database and nothing to set up: it works the same on your machine and on a host such as Vercel. A sale is a USDC payment that your key answered with a pass for the same agent; other USDC sent to you shows only in your balance. It shows only public ledger data, which is why it needs no login; put it behind your own login if you prefer.
 
 ## Exports
 
