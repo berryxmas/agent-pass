@@ -42,6 +42,26 @@ agent-1 (`GA3CI5...E4HY`) against Saturday's toy app on localhost, run by its ag
 | 5. Next request with the token only | 200, no payment |
 | 6. `agent_pass.valid(demo-app, agent-1)` | `true` |
 
+## One pass, two apps (26 Oct, 00:41 UTC)
+
+`npm run agent:second-app` with agent-1, against the sample bookshop on Vercel (built from the published package, owner `GC3DF7VPQD6BLUYPGWVAT363AG3QORHCRY3OK4XTET6HDTMQ6MXLUNHD`) and Book Reviews on this Mac (`PORT=4103 npm run second-app`, because a test server held the default port 4100; the agent then ran with `SECOND_APP_URL=http://localhost:4103/agent/reviews`):
+
+```
+1. first app  https://agent-pass-sample.vercel.app/agent/books
+   402, paying 0.0500000 USDC to GC3DF7VPQD6BLUYPGWVAT363AG3QORHCRY3OK4XTET6HDTMQ6MXLUNHD
+   paid  56dae276da74d4327608246461db1617b9a4c99c925a80727812e0f798138baf
+   pass  9722bbb18de72767b92ff43f7e62f9dd940d2fb775c37308f97d66271a53aaac  (in the shared contract)
+
+2. second app http://localhost:4103/agent/reviews  (no payment, no key of the first app)
+   no pass: 401  No pass. Buy one at an app we honor.
+   the pass, copied by someone without the agent key: 401  No fresh signature by the pass's agent key.
+   the pass + signed by the agent key: 200  3 reviews, on the pass sold by GC3D...UNHD
+```
+
+Book Reviews logged `agent_pass.valid(GC3D..., GA3C...) on CDLR...: true` for the 200. A token signed by a real account that never called `issue` got 401 "The contract has no live pass for this agent", so the contract, not the token, decides. The agent's signature names the app it was made for (Book Reviews' own name, `AUDIENCE`, never the request's Host header) and is let in once, so a signature made for another app, or replayed, gets 401 (`src/second-app/honor.test.ts`).
+
+`passIsValid()` simulates the read with the selling app's address as the source account, so it throws when that account does not exist on testnet. A real seller always exists, since it is paid; Book Reviews answers 502 in that case and lets nobody in.
+
 ## An `issue` that fails on chain gives no pass
 
 `signAndSend()` in stellar-sdk 15.1.0 resolves even when the transaction lands with status FAILED; it throws only when sending fails or the transaction is never found. The middleware now hands out a pass only when the status is SUCCESS (`confirmIssued` in `src/middleware/index.ts`), and a failed `issue` takes the 502 path.

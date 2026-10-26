@@ -6,8 +6,10 @@
     "node": ">=23.6"
   },
   "scripts": {
-    "test": "node --test src/middleware/*.test.ts",
-    "package": "npm pack ./src/middleware --pack-destination ."
+    "test": "node --test src/middleware/*.test.ts src/second-app/*.test.ts",
+    "package": "npm pack ./src/middleware --pack-destination .",
+    "second-app": "node src/second-app/server.ts",
+    "agent:second-app": "node scripts/second-app-demo.ts"
   },
   "dependencies": {
     "@stellar/mpp": "^0.7.1",
