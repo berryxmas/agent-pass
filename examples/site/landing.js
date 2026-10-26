@@ -9,6 +9,7 @@ const PASS = '4480e7e7292b8376d5e27688f7c90eec4dacf3fc5ca1e59e3f840ac073bf3a0a';
 const CONTRACT = 'CDLR2ABHIPQ7SNWJKT3S5EE7DFTZ2VB2FJLISODIFNLYCRUCZKBFYJKU';
 const REPO = 'https://github.com/berryxmas/agent-pass';
 const NPM = 'https://www.npmjs.com/package/@nicko-ai/agent-pass';
+const short = (s) => `${s.slice(0, 8)}…${s.slice(-4)}`;
 
 export function landing({ price, ttlSeconds, host }) {
   const hours = ttlSeconds / 3600;
@@ -19,10 +20,10 @@ export function landing({ price, ttlSeconds, host }) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Agent Pass · let AI agents pay to use your Express app</title>
-<meta name="description" content="One npm package. An AI agent gets 402 Payment Required, pays ${price} USDC on Stellar over MPP, and gets a pass for ${passLength}. No account, no sign-up. Live on testnet with a sample store and its sales dashboard.">
-<meta property="og:title" content="Agent Pass · let AI agents pay to use your Express app">
-<meta property="og:description" content="An agent gets 402, pays USDC on Stellar, gets a pass. One npm package, one sentence in Claude Code. Live on testnet.">
+<title>Agent Pass · let AI agents pay to use your app</title>
+<meta name="description" content="AI agents can't sign up for your app. With Agent Pass they pay ${price} USDC on Stellar and get in for ${passLength}. One npm package for Express, set up with one sentence in Claude Code. Live on testnet.">
+<meta property="og:title" content="Agent Pass · let AI agents pay to use your app">
+<meta property="og:description" content="AI agents can't sign up. With Agent Pass they pay a few cents in USDC on Stellar and get a pass. One npm package, one sentence in Claude Code.">
 <link rel="icon" href="/agent-pass-icon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -34,84 +35,92 @@ export function landing({ price, ttlSeconds, host }) {
   <a class="wordmark" href="/"><img src="/agent-pass-logo.svg" alt="Agent Pass" height="22"></a>
   <nav>
     <a href="#how">How it works</a>
-    <a href="#live">Live on testnet</a>
-    <a href="${NPM}">npm</a>
+    <a href="#demo">Demo</a>
     <a href="${REPO}">GitHub</a>
   </nav>
 </header>
 
 <main>
   <section class="hero">
-    <p class="eyebrow">HackMeridian 2026 · Stellar Composed · testnet</p>
-    <h1>Let AI agents pay to use your Express app.</h1>
-    <p class="lead">An agent that calls your agent route gets <code>402 Payment Required</code>, pays ${price} USDC on Stellar, and gets a pass for ${passLength}. No account, no sign-up. You watch every sale on a dashboard your app serves itself.</p>
+    <p class="eyebrow">HackMeridian 2026 · Stellar testnet</p>
+    <h1>Let AI agents pay to use your app.</h1>
+    <p class="lead">AI agents can't make accounts. With Agent Pass they pay <strong>${price} USDC</strong> and get in for <strong>${passLength}</strong>. No sign-up, no API keys. You add it to an Express app with one sentence in Claude Code.</p>
     <div class="cta">
-      <a class="btn btn-primary" href="/marta">Open the sample store</a>
-      <a class="btn" href="/agent-pass">See the owner's sales</a>
+      <a class="btn btn-primary" href="#demo">See the live demo</a>
+      <a class="btn" href="${REPO}">Read the code</a>
     </div>
-    <p class="trust">Every number on the dashboard is read live from the public Stellar ledger. Each row links to its transaction.</p>
   </section>
 
-  <section class="sentence">
-    <h2>Set it up with one sentence</h2>
-    <p>Open Claude Code in your Express app and type:</p>
-    <pre><code>${esc(SENTENCE)}</code></pre>
-    <p>Claude Code installs <a href="${NPM}">@nicko-ai/agent-pass</a>, makes or loads your Stellar key in the Stellar CLI, puts the gate on your route, mounts the dashboard on <code>/agent-pass</code>, and pays once from a test agent to prove it. Your secret key never leaves the Stellar CLI.</p>
-  </section>
-
-  <section id="how" class="how">
-    <h2>How a visit works</h2>
-    <ol>
-      <li><strong>402.</strong> The agent calls <code>/agent/icons?q=sun</code> with no pass. The gate answers with an MPP charge: the price, your address, USDC on Stellar.</li>
-      <li><strong>Payment.</strong> The agent signs a USDC transfer with its own key and retries. Your server sends it to the network and waits until it settles. No wallet popup, no approval step.</li>
-      <li><strong>Pass.</strong> Your server records the pass in the shared <code>agent_pass</code> contract with your key and answers with a token it signed. Money first, pass second.</li>
-      <li><strong>Next calls.</strong> The agent sends the token. The gate checks the signature and the expiry locally, with no network call and no payment, until the pass expires.</li>
+  <section id="how">
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li>
+        <span class="num">1</span>
+        <strong>The agent asks</strong>
+        <span>It calls your agent route and gets <code>402 Payment Required</code> with the price.</span>
+      </li>
+      <li>
+        <span class="num">2</span>
+        <strong>The agent pays</strong>
+        <span>It sends ${price} USDC on Stellar from its own wallet. It settles in about five seconds.</span>
+      </li>
+      <li>
+        <span class="num">3</span>
+        <strong>The agent gets in</strong>
+        <span>It gets a pass for ${passLength}. You see the sale on your dashboard.</span>
+      </li>
     </ol>
   </section>
 
-  <section id="live" class="live">
-    <h2>Live on testnet, right here</h2>
-    <div class="cards">
-      <a class="card" href="/marta">
-        <span class="card-k">The sample store</span>
-        <strong>Marta Icons</strong>
-        <span>Marta's icon store in Lisbon, a plain Express app with the gate added. People search and copy icons for free.</span>
-      </a>
-      <a class="card" href="/agent/icons?q=sun">
-        <span class="card-k">The agent door</span>
-        <strong>GET /agent/icons?q=sun</strong>
-        <span>Answers 402 with the price until an agent pays. Open it in your browser to see the charge.</span>
-      </a>
-      <a class="card" href="/agent-pass">
-        <span class="card-k">The owner's dashboard</span>
-        <strong>/agent-pass</strong>
-        <span>Earned, passes sold, agents, balance and every sale with its transaction link. No database.</span>
-      </a>
-    </div>
-    <h3>One real visit through this site</h3>
-    <table class="proof">
-      <tr><td>Payment, ${price} USDC from a test agent to the store's owner</td><td><a href="https://stellar.expert/explorer/testnet/tx/${PAYMENT}"><code>${PAYMENT.slice(0, 8)}…${PAYMENT.slice(-4)}</code></a></td></tr>
-      <tr><td>The pass, written in the shared contract by the owner's key</td><td><a href="https://stellar.expert/explorer/testnet/tx/${PASS}"><code>${PASS.slice(0, 8)}…${PASS.slice(-4)}</code></a></td></tr>
-      <tr><td>The <code>agent_pass</code> contract, one for every app</td><td><a href="https://stellar.expert/explorer/testnet/contract/${CONTRACT}"><code>${CONTRACT.slice(0, 8)}…${CONTRACT.slice(-4)}</code></a></td></tr>
-    </table>
-    <p class="try">Try it from a terminal with a funded testnet key:</p>
-    <pre><code>AGENT_SECRET="$(stellar keys secret my-agent)" node node_modules/@nicko-ai/agent-pass/skills/agent-pass/prove.mjs "${base}/agent/icons?q=sun"</code></pre>
+  <section id="setup">
+    <h2>Add it to your app</h2>
+    <p>Open Claude Code in your Express app and paste this:</p>
+    <pre><code>${esc(SENTENCE)}</code></pre>
+    <p class="note">Claude Code installs the <a href="${NPM}">npm package</a>, sets up your Stellar wallet, protects the route and adds the dashboard. Then it makes one test payment to prove it works.</p>
   </section>
 
-  <section class="why">
-    <h2>Why MPP and Stellar</h2>
-    <ul>
-      <li><strong>Stock MPP, both sides.</strong> The agent uses the official Stellar MPP client; the gate uses the MPP server. No Agent Pass code in the agent.</li>
-      <li><strong>No pass before the money settles.</strong> A USDC payment on Stellar settles in about five seconds for a fraction of a cent, so ${price} USDC for ${passLength} is a real price.</li>
-      <li><strong>One pass, many apps.</strong> Every app writes its passes to the same contract. A second app that never took the money can honor the pass after a free read.</li>
-      <li><strong>Cash-out through an anchor.</strong> The owner's USDC leaves over SEP-24 to the SDF test anchor; the sample store's owner withdrew 1 USDC of its sales.</li>
-    </ul>
+  <section id="demo">
+    <h2>Try the live demo</h2>
+    <p>Marta runs an icon store. People use it for free. Agents pay for a pass.</p>
+    <div class="cards">
+      <a class="card" href="/marta">
+        <span class="card-k">1 · The store</span>
+        <strong>Marta Icons</strong>
+        <span>The normal website for people.</span>
+      </a>
+      <a class="card" href="/agent/icons?q=sun">
+        <span class="card-k">2 · The agent door</span>
+        <strong>/agent/icons</strong>
+        <span>Open it and you'll see the 402 an agent sees.</span>
+      </a>
+      <a class="card" href="/agent-pass">
+        <span class="card-k">3 · The owner's dashboard</span>
+        <strong>Sales</strong>
+        <span>Every payment, read live from Stellar.</span>
+      </a>
+    </div>
+  </section>
+
+  <section id="proof">
+    <h2>It's real</h2>
+    <p>Every sale is a public Stellar testnet transaction. Here is one agent visit to this site:</p>
+    <table class="proof">
+      <tr><td>The agent paid ${price} USDC</td><td><a href="https://stellar.expert/explorer/testnet/tx/${PAYMENT}"><code>${short(PAYMENT)}</code></a></td></tr>
+      <tr><td>The pass was recorded on-chain</td><td><a href="https://stellar.expert/explorer/testnet/tx/${PASS}"><code>${short(PASS)}</code></a></td></tr>
+      <tr><td>The shared pass contract</td><td><a href="https://stellar.expert/explorer/testnet/contract/${CONTRACT}"><code>${short(CONTRACT)}</code></a></td></tr>
+    </table>
+    <details>
+      <summary>Pay as an agent yourself</summary>
+      <p>With a funded testnet key in the Stellar CLI and the package installed:</p>
+      <pre><code>AGENT_SECRET="$(stellar keys secret my-agent)" node node_modules/@nicko-ai/agent-pass/skills/agent-pass/prove.mjs "${base}/agent/icons?q=sun"</code></pre>
+    </details>
+    <p class="built">Built with Stellar USDC, MPP payments, a Soroban contract and a SEP-24 anchor for cash-out.</p>
   </section>
 </main>
 
 <footer class="foot">
   <span>Agent Pass · HackMeridian 2026</span>
-  <span><a href="${REPO}">Code on GitHub</a> · <a href="${NPM}">@nicko-ai/agent-pass on npm</a> · <a href="/marta">Marta Icons</a> · <a href="/agent-pass">Dashboard</a></span>
+  <span><a href="${REPO}">GitHub</a> · <a href="${NPM}">npm</a> · <a href="/llms.txt">llms.txt</a></span>
 </footer>
 </body>
 </html>`;

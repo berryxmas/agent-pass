@@ -1,0 +1,5 @@
+# Agent Pass sample site. Everything here is public. A summary for AI tools is at /llms.txt.
+User-agent: *
+Allow: /
+
+Sitemap: https://agent-pass-sample.vercel.app/sitemap.xml

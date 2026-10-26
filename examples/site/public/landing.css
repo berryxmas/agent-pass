@@ -52,13 +52,17 @@ h3 { font-size: 17px; font-weight: 600; color: var(--text-strong); margin: 36px 
 .btn:hover { border-color: #c0c8d2; color: var(--text-strong); }
 .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
 .btn-primary:hover { background: var(--accent-hover); color: #fff; }
-.trust { margin-top: 18px; font-size: 14px; color: var(--text-secondary); }
 
-.sentence p { margin: 0 0 12px; }
-.sentence pre { margin: 6px 0 16px; }
+section > p { margin-bottom: 14px; }
+.lead strong { color: var(--text-strong); }
 
-.how ol { padding-left: 22px; display: grid; gap: 12px; }
-.how li strong { color: var(--text-strong); }
+.steps { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.steps li { display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 12px; background: var(--bg-subtle); font-size: 15px; line-height: 23px; }
+.steps strong { font-size: 17px; color: var(--text-strong); }
+.num { display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); color: #fff; font-weight: 700; font-size: 14px; margin-bottom: 4px; }
+
+#setup pre { margin: 4px 0 14px; }
+.note { font-size: 15px; color: var(--text-secondary); }
 
 .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
 .card { display: flex; flex-direction: column; gap: 6px; padding: 18px; border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 14px; line-height: 21px; box-shadow: 0 2px 5px rgba(60,66,87,0.06); transition: border-color 0.15s, transform 0.15s; }
@@ -68,22 +72,22 @@ h3 { font-size: 17px; font-weight: 600; color: var(--text-strong); margin: 36px 
 .proof { width: 100%; border-collapse: collapse; font-size: 15px; }
 .proof td { padding: 11px 0; border-top: 1px solid var(--border); vertical-align: top; }
 .proof td:last-child { text-align: right; white-space: nowrap; padding-left: 16px; }
-.try { margin: 24px 0 10px; }
-
-.why ul { padding-left: 22px; display: grid; gap: 10px; }
-.why li strong { color: var(--text-strong); }
+details { margin-top: 20px; font-size: 15px; }
+summary { cursor: pointer; font-weight: 600; color: var(--accent); }
+details p { margin: 10px 0; }
+.built { margin-top: 24px; font-size: 14px; color: var(--text-secondary); }
 
 .foot { display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; max-width: 880px; margin: 56px auto 0; padding: 22px 32px 36px; border-top: 1px solid var(--border); font-size: 14px; color: var(--text-secondary); }
 
 @media (max-width: 760px) {
   .top { padding: 0 18px; }
   .top nav { gap: 14px; font-size: 13px; }
-  .top nav a:nth-child(-n+2) { display: none; }
+  .top nav a:first-child { display: none; }
   main { padding: 0 18px; }
   .hero { padding: 44px 0 16px; }
   .hero h1 { font-size: 36px; line-height: 42px; }
   .lead { font-size: 17px; line-height: 27px; }
-  .cards { grid-template-columns: 1fr; }
+  .cards, .steps { grid-template-columns: 1fr; }
   .proof td:last-child { white-space: normal; }
   .foot { padding: 20px 18px 30px; }
 }

@@ -25,6 +25,7 @@ app.get('/agent/icons/:id.svg', icon);
 | Anyone | `/` | The Agent Pass landing page |
 | People | `/marta`, `/api/icons?q=sun`, `/icons/sun.svg` | The store, the search, the SVG file |
 | AI agents | `/agent/icons?q=sun`, `/agent/icons/sun.svg` | The same search and file, `402 Payment Required` until the agent pays 0.05 USDC for an hour |
+| Crawlers and AI tools | `/llms.txt`, `/robots.txt`, `/sitemap.xml` | A plain-text summary of the project for LLMs, the crawl rules and the page list |
 | The owner | `/agent-pass` | Every sale, read live from the Stellar testnet ledger: https://agent-pass-sample.vercel.app/agent-pass |
 
 First real visit through the live app on Vercel, 26 Oct 09:48 WET, from a test agent: payment [`4ba07b25...`](https://stellar.expert/explorer/testnet/tx/4ba07b25c587a662eb9527b96a86cd1e7eaafb1fce96081fe20a95e524008de1), pass [`4480e7e7...`](https://stellar.expert/explorer/testnet/tx/4480e7e7292b8376d5e27688f7c90eec4dacf3fc5ca1e59e3f840ac073bf3a0a).
@@ -37,6 +38,7 @@ First real visit through the live app on Vercel, 26 Oct 09:48 WET, from a test a
 | `landing.js`, `public/landing.css` | The Agent Pass landing page |
 | `icons.js` | The catalogue: 36 icons, each a real SVG from `lucide-static` (ISC license) in Marta's colours |
 | `page.js` | Marta's store page, rendered on the server |
+| `public/llms.txt`, `public/robots.txt`, `public/sitemap.xml` | Static files for crawlers and AI tools, pointing at the live site |
 | `public/style.css`, `public/site.js` | The look, and the search, chips, icon panel and Copy SVG in the browser |
 
 ## Run it
