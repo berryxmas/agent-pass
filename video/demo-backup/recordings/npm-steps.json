@@ -1,0 +1,4 @@
+[
+  {"expect": "$ ", "settle": 0.5, "send": "npm view @nicko-ai/agent-pass name version description keywords license dependencies\r", "label": "npm view"},
+  {"idle": 4, "min": 6, "send": "exit\r", "label": "done"}
+]

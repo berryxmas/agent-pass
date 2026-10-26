@@ -1,0 +1,138 @@
+[
+ {
+  "name": "01-title",
+  "video": "out/deck/s1.png",
+  "kind": "still",
+  "lines": [
+   {
+    "id": "01-title",
+    "at": 0.6
+   }
+  ]
+ },
+ {
+  "name": "02-problem",
+  "video": "out/deck/s2.png",
+  "kind": "still",
+  "lines": [
+   {
+    "id": "02-problem",
+    "at": 0.5
+   }
+  ]
+ },
+ {
+  "name": "03-solution",
+  "video": "out/deck/s3.png",
+  "kind": "still",
+  "lines": [
+   {
+    "id": "03-solution",
+    "at": 0.5
+   }
+  ]
+ },
+ {
+  "name": "04-site",
+  "video": "out/clips/site.webm",
+  "kind": "clip",
+  "lines": [
+   {
+    "id": "04-site",
+    "at": 1.0
+   }
+  ],
+  "length": 11.2
+ },
+ {
+  "name": "05-dashboard",
+  "video": "out/clips/dashboard.webm",
+  "kind": "clip",
+  "lines": [
+   {
+    "id": "05-dashboard",
+    "at": 0.8
+   }
+  ],
+  "length": 14.6
+ },
+ {
+  "name": "06-claude-code",
+  "video": "out/clips/claude-setup.webm",
+  "kind": "clip",
+  "lines": [
+   {
+    "id": "06-claude-start",
+    "at": 0.5
+   },
+   {
+    "id": "07-claude-run",
+    "at": 12.5
+   },
+   {
+    "id": "08-claude-done",
+    "at": 24.5
+   }
+  ],
+  "length": 33.2
+ },
+ {
+  "name": "07-npm",
+  "video": "out/clips/npm-view.webm",
+  "kind": "clip",
+  "lines": [
+   {
+    "id": "09-npm",
+    "at": 1.5
+   }
+  ]
+ },
+ {
+  "name": "08-agent",
+  "video": "out/clips/agent-pays.webm",
+  "kind": "clip",
+  "lines": [
+   {
+    "id": "10-agent",
+    "at": 1.0
+   }
+  ],
+  "length": 31.0
+ },
+ {
+  "name": "09-explorer",
+  "video": "out/clips/explorer.webm",
+  "kind": "clip",
+  "lines": [
+   {
+    "id": "11-explorer",
+    "at": 0.8
+   }
+  ],
+  "length": 14.7
+ },
+ {
+  "name": "10-cash-out",
+  "video": "../../docs/media/cash-out.mp4",
+  "kind": "clip",
+  "speed": 2.0,
+  "lines": [
+   {
+    "id": "12-cashout",
+    "at": 1.0
+   }
+  ],
+  "length": 18.2
+ },
+ {
+  "name": "11-end",
+  "video": "out/deck/s4.png",
+  "kind": "still",
+  "lines": [
+   {
+    "id": "13-end",
+    "at": 0.6
+   }
+  ]
+ }
+]

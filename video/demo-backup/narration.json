@@ -1,0 +1,67 @@
+[
+ {
+  "id": "01-title",
+  "tag": "[calm] ",
+  "text": "This is AgentPass. If Stripe and x402 had a baby: one npm package that lets any Express app charge AI agents for access, paid in USDC on Stellar."
+ },
+ {
+  "id": "02-problem",
+  "tag": "",
+  "text": "Web tools can't turn agent traffic into revenue. Less than one percent of online tools can charge an agent for their work, so most of them just block agents. To get paid by an agent today, a creator needs an engineering team: offer an API, build an MCP server, add billing."
+ },
+ {
+  "id": "03-solution",
+  "tag": "",
+  "text": "AgentPass turns HTTP 402 into Stripe Checkout for agents: a ready-to-install library, set up with one sentence in Claude Code. Under the hood, one gate, one payment, one pass. The agent asks for a resource and gets a 402 with the price. It pays the creator in USDC over MPP on Stellar. A Soroban contract records the pass and its expiry. And the app returns the content with a signed pass, good until it expires."
+ },
+ {
+  "id": "04-site",
+  "tag": "",
+  "text": "Here is a live sample. Marta Icons, a small icon shop on Express, running on Vercel. Humans see the normal site."
+ },
+ {
+  "id": "05-dashboard",
+  "tag": "",
+  "text": "And here is its owner's dashboard: USDC earned, passes sold, the agents that paid, and every sale as a real testnet transaction, read straight from the public ledger. No database, nothing to set up."
+ },
+ {
+  "id": "06-claude-start",
+  "tag": "",
+  "text": "This is how the owner set it up. A fresh Express app, Claude Code, and one sentence: install the package, follow its skill, and sell the agent route for five cents per hour."
+ },
+ {
+  "id": "07-claude-run",
+  "tag": "",
+  "text": "Claude Code installs the published package, makes and funds the owner's Stellar key on testnet, puts the gate on the route, mounts the dashboard, and then proves it with one real payment and one real pass."
+ },
+ {
+  "id": "08-claude-done",
+  "tag": "",
+  "text": "A few minutes later it is done: a handful of lines in the app, and the payment and the pass both on the Stellar explorer."
+ },
+ {
+  "id": "09-npm",
+  "tag": "",
+  "text": "The package is public on npm, with the Claude Code skill inside it, so any Express app owner can do the same."
+ },
+ {
+  "id": "10-agent",
+  "tag": "",
+  "text": "Now the agent. It holds its own key in the Stellar CLI. It calls the icons route, gets the 402 with the price, signs a USDC transfer, and gets its pass. Then it takes the same pass to a second app, Book Reviews, which never took its money and holds no key. Without a pass: refused. With a copied pass and the wrong key: refused. With the pass and the agent's own signature: it is in."
+ },
+ {
+  "id": "11-explorer",
+  "tag": "",
+  "text": "Back on the dashboard, the new sale sits at the top. Each row opens the real transaction on the Stellar explorer. Successful."
+ },
+ {
+  "id": "12-cashout",
+  "tag": "",
+  "text": "And the owner gets paid out. One USDC earned, withdrawn through a Stellar anchor: the anchor's form, completed, the payment on the explorer, and the balance back to zero."
+ },
+ {
+  "id": "13-end",
+  "tag": "[confident] ",
+  "text": "AgentPass. One sentence for the creator, one payment for the agent, real money on Stellar. Let's monetize."
+ }
+]

@@ -1,0 +1,33 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><link rel="stylesheet" href="node_modules/@xterm/xterm/css/xterm.css">
+<style>
+  html,body { margin:0; width:1280px; height:720px; background:#1c1f26; overflow:hidden; font-family:-apple-system,Inter,sans-serif; }
+  .win { position:absolute; left:20px; top:16px; width:1240px; height:688px; background:#0d1117; border-radius:12px; box-shadow:0 20px 60px rgba(0,0,0,.5); overflow:hidden; border:1px solid #30363d; }
+  .bar { height:40px; background:#161b22; display:flex; align-items:center; padding:0 14px; gap:8px; color:#8b949e; font-size:13px; border-bottom:1px solid #30363d; }
+  .dot { width:12px; height:12px; border-radius:50%; } .r{background:#ff5f57}.y{background:#febc2e}.g{background:#28c840}
+  .title { flex:1; text-align:center; margin-right:60px; }
+  #term { position:absolute; left:14px; top:48px; right:0; bottom:0; }
+  .xterm .xterm-viewport { overflow:hidden !important; }
+</style></head><body>
+<div class="win"><div class="bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="title" id="title">Terminal</span></div><div id="term"></div></div>
+<script src="node_modules/@xterm/xterm/lib/xterm.js"></script>
+<script>
+  const REC = window.REC;
+  document.getElementById('title').textContent = window.TITLE || 'Terminal';
+  const term = new Terminal({ cols: REC.cols, rows: REC.rows, fontSize: 15, lineHeight: 1.15, fontFamily: 'Menlo, SFMono-Regular, ui-monospace, monospace', cursorBlink: true, allowProposedApi: true,
+    theme: { background: '#0d1117', foreground: '#e6edf3', cursor: '#e6edf3', black: '#484f58', red: '#ff7b72', green: '#3fb950', yellow: '#d29922', blue: '#58a6ff', magenta: '#bc8cff', cyan: '#39c5cf', white: '#b1bac4', brightBlack: '#6e7681', brightRed: '#ffa198', brightGreen: '#56d364', brightYellow: '#e3b341', brightBlue: '#79c0ff', brightMagenta: '#d2a8ff', brightCyan: '#56d4dd', brightWhite: '#f0f6fc' } });
+  term.open(document.getElementById('term'));
+  const b64 = (s) => Uint8Array.from(atob(s), (c) => c.charCodeAt(0));
+  window.play = (timeline) => new Promise((resolve) => {
+    // timeline: [[t_seconds, base64], ...] already re-timed
+    const t0 = performance.now();
+    let i = 0;
+    const tick = () => {
+      const now = (performance.now() - t0) / 1000;
+      while (i < timeline.length && timeline[i][0] <= now) { term.write(b64(timeline[i][1])); i++; }
+      if (i < timeline.length) requestAnimationFrame(tick); else resolve(now);
+    };
+    tick();
+  });
+  window.READY = true;
+</script></body></html>

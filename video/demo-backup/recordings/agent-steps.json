@@ -1,0 +1,14 @@
+[
+ {
+  "expect": "$ ",
+  "settle": 0.5,
+  "send": "FIRST_APP_URL=\"https://agent-pass-sample.vercel.app/agent/icons?q=sun\" STELLAR_SECRET=\"$(stellar keys secret agent-1)\" npm run agent:second-app\r",
+  "label": "run the agent"
+ },
+ {
+  "idle": 15,
+  "min": 25,
+  "send": "exit\r",
+  "label": "done"
+ }
+]

@@ -1,0 +1,6 @@
+[
+  {"expect": "$ ", "settle": 0.5, "send": "claude\r", "label": "start claude"},
+  {"expect": "auto mode on", "settle": 2.5, "send": "Install the @nicko-ai/agent-pass npm package and follow node_modules/@nicko-ai/agent-pass/skills/agent-pass/SKILL.md to sell /agent to AI agents for 0.05 USDC per hour. Put /api/rates behind it and pay to a new key called rates-owner.", "label": "type the sentence"},
+  {"sleep": 2.5, "send": "\r", "label": "enter"},
+  {"idle": 45, "min": 120, "label": "idle after the run"}
+]
